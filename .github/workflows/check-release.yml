@@ -19,19 +19,14 @@ jobs:
       - name: Wait for assets propagation
         run: sleep 30
 
-      - name: Debug API response for assets
-        run: |
-          api_response=$(curl -sS -X GET \
-            -H "Accept: application/vnd.github.v3+json" \
-            -H "Authorization: token ${{ secrets.GH_TOKEN }}" \
-            "https://api.github.com/repos/$GITHUB_REPOSITORY/releases/${{ github.event.release.id }}/assets")
-          echo "API response: $api_response"
+      - name: Install Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14'
 
-      - name: List assets from the release
-        run: |
-          assets=$(curl -X GET \
-            -H "Accept: application/vnd.github.v3+json" \
-            -H "Authorization: token ${{ secrets.GH_TOKEN }}" \
-            "https://api.github.com/repos/$GITHUB_REPOSITORY/releases/${{ github.event.release.id }}/assets" \
-            | jq -c '.[]')
-          echo "Assets: $assets"
+      - name: List assets using JavaScript
+        run: node list-assets.js
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          RELEASE_ID: ${{ github.event.release.id }}
