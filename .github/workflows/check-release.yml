@@ -13,14 +13,14 @@ jobs:
 
       - name: Fetch release details
         run: |
-          release_data=$(curl -sS --header "Authorization: token ${{ secrets.GITHUB_TOKEN }}" "https://api.github.com/repos/$GITHUB_REPOSITORY/releases/${{ github.event.release.id }}")
+          release_data=$(curl -sS --header "Authorization: token ${{ secrets.GH_TOKEN }}" "https://api.github.com/repos/$GITHUB_REPOSITORY/releases/${{ github.event.release.id }}")
           echo "$release_data" > release_data.json
 
       - name: List assets from the release
         run: |
           assets=$(curl -X GET \
             -H "Accept: application/vnd.github.v3+json" \
-            -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            -H "Authorization: token ${{ secrets.GH_TOKEN }}" \
             "https://api.github.com/repos/$GITHUB_REPOSITORY/releases/${{ github.event.release.id }}/assets" \
             | jq -c '.[]')
           echo "Assets: $assets"
